@@ -1,4 +1,4 @@
-package model;
+package br.com.cras.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
