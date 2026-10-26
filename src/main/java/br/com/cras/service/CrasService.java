@@ -1,3 +1,4 @@
+
 package br.com.cras.service;
 
 import br.com.cras.dao.CrasDAO;
@@ -7,23 +8,40 @@ import java.util.List;
 
 public class CrasService {
 
-    private final CrasDAO crasDAO;
-
-    public CrasService() {
-        this.crasDAO = new CrasDAO();
-    }
+    private final CrasDAO crasDAO = new CrasDAO();
 
     public void cadastrar(Cras cras) {
+
         if (cras == null) {
             throw new IllegalArgumentException(
-                    "O CRAS não pode ser nulo."
+                    "A unidade CRAS não pode ser nula."
             );
         }
 
-        if (cras.getNome() == null
-                || cras.getNome().isBlank()) {
+        if (cras.getNome() == null || cras.getNome().isBlank()) {
             throw new IllegalArgumentException(
-                    "O nome do CRAS é obrigatório."
+                    "O nome da unidade é obrigatório."
+            );
+        }
+
+        if (cras.getIdEquipamentoOrigem() == null
+                || cras.getIdEquipamentoOrigem().isBlank()) {
+            throw new IllegalArgumentException(
+                    "O identificador do equipamento é obrigatório."
+            );
+        }
+
+        if (cras.getMunicipio() == null) {
+            throw new IllegalArgumentException(
+                    "O município da unidade é obrigatório."
+            );
+        }
+
+        if (crasDAO.buscarPorIdEquipamento(
+                cras.getIdEquipamentoOrigem()) != null) {
+
+            throw new IllegalArgumentException(
+                    "Já existe uma unidade com esse identificador."
             );
         }
 
@@ -31,24 +49,29 @@ public class CrasService {
     }
 
     public void atualizar(Cras cras) {
-        if (cras == null || cras.getId() == null) {
+
+        if (cras == null) {
             throw new IllegalArgumentException(
-                    "Informe um CRAS válido para atualizar."
+                    "A unidade CRAS não pode ser nula."
+            );
+        }
+
+        if (cras.getNome() == null || cras.getNome().isBlank()) {
+            throw new IllegalArgumentException(
+                    "O nome da unidade é obrigatório."
+            );
+        }
+
+        if (cras.getMunicipio() == null) {
+            throw new IllegalArgumentException(
+                    "O município da unidade é obrigatório."
             );
         }
 
         crasDAO.atualizar(cras);
     }
 
-    public void excluir(Long id) {
-        Cras cras = buscarPorId(id);
-
-        if (cras == null) {
-            throw new IllegalArgumentException(
-                    "CRAS não encontrado."
-            );
-        }
-
+    public void excluir(Cras cras) {
         crasDAO.excluir(cras);
     }
 

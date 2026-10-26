@@ -1,3 +1,4 @@
+
 package br.com.cras.model;
 
 import jakarta.persistence.*;
@@ -7,6 +8,10 @@ import jakarta.persistence.*;
 public class CrasOriginal {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_original")
+    private Long idOriginal;
+
     @Column(name = "id_equipamento")
     private String idEquipamento;
 
@@ -53,6 +58,14 @@ public class CrasOriginal {
     private String dataAtualizacao;
 
     public CrasOriginal() {
+    }
+
+    public Long getIdOriginal() {
+        return idOriginal;
+    }
+
+    public void setIdOriginal(Long idOriginal) {
+        this.idOriginal = idOriginal;
     }
 
     public String getIdEquipamento() {

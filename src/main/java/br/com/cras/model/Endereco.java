@@ -1,6 +1,8 @@
+
 package br.com.cras.model;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "Endereco")
@@ -8,10 +10,15 @@ public class Endereco {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_endereco")
     private Long id;
 
-    @Column(name = "endereco")
-    private String endereco;
+    @ManyToOne
+    @JoinColumn(name = "id_cras", nullable = false)
+    private Cras cras;
+
+    @Column(name = "logradouro")
+    private String logradouro;
 
     @Column(name = "numero")
     private String numero;
@@ -28,8 +35,11 @@ public class Endereco {
     @Column(name = "cep")
     private String cep;
 
-    @Column(name = "georef_location")
-    private String georefLocation;
+    @Column(name = "latitude")
+    private BigDecimal latitude;
+
+    @Column(name = "longitude")
+    private BigDecimal longitude;
 
     public Endereco() {
     }
@@ -42,12 +52,20 @@ public class Endereco {
         this.id = id;
     }
 
-    public String getEndereco() {
-        return endereco;
+    public Cras getCras() {
+        return cras;
     }
 
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
+    public void setCras(Cras cras) {
+        this.cras = cras;
+    }
+
+    public String getLogradouro() {
+        return logradouro;
+    }
+
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
     }
 
     public String getNumero() {
@@ -90,11 +108,19 @@ public class Endereco {
         this.cep = cep;
     }
 
-    public String getGeorefLocation() {
-        return georefLocation;
+    public BigDecimal getLatitude() {
+        return latitude;
     }
 
-    public void setGeorefLocation(String georefLocation) {
-        this.georefLocation = georefLocation;
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
     }
 }

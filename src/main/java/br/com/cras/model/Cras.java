@@ -1,7 +1,8 @@
+
 package br.com.cras.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Cras")
@@ -9,28 +10,24 @@ public class Cras {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cras")
     private Long id;
 
-    @Column(name = "id_equipamento")
-    private String idEquipamento;
-
-    @Column(name = "nome")
-    private String nome;
-
-    @Column(name = "data_atualizacao")
-    private LocalDate dataAtualizacao;
+    @Column(name = "id_equipamento_origem", nullable = false)
+    private String idEquipamentoOrigem;
 
     @ManyToOne
-    @JoinColumn(name = "municipio_id")
+    @JoinColumn(name = "id_municipio", nullable = false)
     private Municipio municipio;
 
-    @ManyToOne
-    @JoinColumn(name = "endereco_id")
-    private Endereco endereco;
+    @Column(name = "nome", nullable = false)
+    private String nome;
 
-    @ManyToOne
-    @JoinColumn(name = "contato_id")
-    private Contato contato;
+    @Column(name = "responsavel")
+    private String responsavel;
+
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
 
     public Cras() {
     }
@@ -43,28 +40,12 @@ public class Cras {
         this.id = id;
     }
 
-    public String getIdEquipamento() {
-        return idEquipamento;
+    public String getIdEquipamentoOrigem() {
+        return idEquipamentoOrigem;
     }
 
-    public void setIdEquipamento(String idEquipamento) {
-        this.idEquipamento = idEquipamento;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public LocalDate getDataAtualizacao() {
-        return dataAtualizacao;
-    }
-
-    public void setDataAtualizacao(LocalDate dataAtualizacao) {
-        this.dataAtualizacao = dataAtualizacao;
+    public void setIdEquipamentoOrigem(String idEquipamentoOrigem) {
+        this.idEquipamentoOrigem = idEquipamentoOrigem;
     }
 
     public Municipio getMunicipio() {
@@ -75,29 +56,38 @@ public class Cras {
         this.municipio = municipio;
     }
 
-    public Endereco getEndereco() {
-        return endereco;
+    public String getNome() {
+        return nome;
     }
 
-    public void setEndereco(Endereco endereco) {
-        this.endereco = endereco;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public Contato getContato() {
-        return contato;
+    public String getResponsavel() {
+        return responsavel;
     }
 
-    public void setContato(Contato contato) {
-        this.contato = contato;
+    public void setResponsavel(String responsavel) {
+        this.responsavel = responsavel;
+    }
+
+    public LocalDateTime getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 
     @Override
     public String toString() {
         return "Cras{" +
                 "id=" + id +
-                ", idEquipamento='" + idEquipamento + '\'' +
+                ", idEquipamentoOrigem='" + idEquipamentoOrigem + '\'' +
                 ", nome='" + nome + '\'' +
-                ", municipio=" + municipio +
+                ", responsavel='" + responsavel + '\'' +
+                ", dataAtualizacao=" + dataAtualizacao +
                 '}';
     }
 }
