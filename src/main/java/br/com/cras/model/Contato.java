@@ -1,3 +1,4 @@
+
 package br.com.cras.model;
 
 import jakarta.persistence.*;
@@ -8,20 +9,17 @@ public class Contato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_contato")
     private Long id;
 
-    @Column(name = "responsavel")
-    private String responsavel;
+    @ManyToOne
+    @JoinColumn(name = "id_cras", nullable = false)
+    private Cras cras;
 
     @Column(name = "telefone")
     private String telefone;
 
     public Contato() {
-    }
-
-    public Contato(String responsavel, String telefone) {
-        this.responsavel = responsavel;
-        this.telefone = telefone;
     }
 
     public Long getId() {
@@ -32,12 +30,12 @@ public class Contato {
         this.id = id;
     }
 
-    public String getResponsavel() {
-        return responsavel;
+    public Cras getCras() {
+        return cras;
     }
 
-    public void setResponsavel(String responsavel) {
-        this.responsavel = responsavel;
+    public void setCras(Cras cras) {
+        this.cras = cras;
     }
 
     public String getTelefone() {
@@ -52,7 +50,6 @@ public class Contato {
     public String toString() {
         return "Contato{" +
                 "id=" + id +
-                ", responsavel='" + responsavel + '\'' +
                 ", telefone='" + telefone + '\'' +
                 '}';
     }

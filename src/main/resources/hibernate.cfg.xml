@@ -14,29 +14,18 @@
             jdbc:sqlserver://localhost:1433;databaseName=CrasPE;encrypt=true;trustServerCertificate=true
         </property>
 
-        <property name="hibernate.connection.username">
-            CrasPE_App
-        </property>
+        <property name="hibernate.connection.username">CrasPE_App</property>
+        <property name="hibernate.connection.password">12345</property>
 
-        <property name="hibernate.connection.password">
-            12345
-        </property>
+        <property name="hibernate.hbm2ddl.auto">validate</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
 
-        <property name="hibernate.dialect">
-            org.hibernate.dialect.SQLServerDialect
-        </property>
-
-        <property name="hibernate.hbm2ddl.auto">
-            validate
-        </property>
-
-        <property name="hibernate.show_sql">
-            true
-        </property>
-
-        <property name="hibernate.format_sql">
-            true
-        </property>
+        <mapping class="br.com.cras.model.CrasOriginal"/>
+        <mapping class="br.com.cras.model.Cras"/>
+        <mapping class="br.com.cras.model.Municipio"/>
+        <mapping class="br.com.cras.model.Endereco"/>
+        <mapping class="br.com.cras.model.Contato"/>
 
     </session-factory>
 </hibernate-configuration>

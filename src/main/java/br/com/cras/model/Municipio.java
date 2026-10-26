@@ -1,3 +1,4 @@
+
 package br.com.cras.model;
 
 import jakarta.persistence.*;
@@ -8,24 +9,19 @@ public class Municipio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_municipio")
     private Long id;
 
-    @Column(name = "ibge")
-    private String ibge;
+    @Column(name = "codigo_ibge", nullable = false)
+    private String codigoIbge;
 
-    @Column(name = "uf")
+    @Column(name = "nome", nullable = false)
+    private String nome;
+
+    @Column(name = "uf", nullable = false, columnDefinition = "char(2)")
     private String uf;
 
-    @Column(name = "cidade")
-    private String cidade;
-
     public Municipio() {
-    }
-
-    public Municipio(String ibge, String uf, String cidade) {
-        this.ibge = ibge;
-        this.uf = uf;
-        this.cidade = cidade;
     }
 
     public Long getId() {
@@ -36,12 +32,20 @@ public class Municipio {
         this.id = id;
     }
 
-    public String getIbge() {
-        return ibge;
+    public String getCodigoIbge() {
+        return codigoIbge;
     }
 
-    public void setIbge(String ibge) {
-        this.ibge = ibge;
+    public void setCodigoIbge(String codigoIbge) {
+        this.codigoIbge = codigoIbge;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getUf() {
@@ -52,21 +56,13 @@ public class Municipio {
         this.uf = uf;
     }
 
-    public String getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
-
     @Override
     public String toString() {
         return "Municipio{" +
                 "id=" + id +
-                ", ibge='" + ibge + '\'' +
+                ", codigoIbge='" + codigoIbge + '\'' +
+                ", nome='" + nome + '\'' +
                 ", uf='" + uf + '\'' +
-                ", cidade='" + cidade + '\'' +
                 '}';
     }
 }

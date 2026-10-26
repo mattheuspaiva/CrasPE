@@ -1,26 +1,17 @@
+
 package br.com.cras.dao;
 
 import br.com.cras.model.Contato;
 import br.com.cras.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import java.util.List;
 
 public class ContatoDAO {
 
     public void salvar(Contato contato) {
-        Transaction transacao = null;
-        try (Session sessao = HibernateUtil.getSessionFactory().openSession()) {
-            transacao = sessao.beginTransaction();
-            sessao.persist(contato);
-            transacao.commit();
-
-        } catch (RuntimeException e) {
-            if (transacao != null && transacao.isActive()) {
-                transacao.rollback();
-            }
-            throw e;
-        }
+        executar(sessao -> sessao.persist(contato));
     }
 
     public Contato buscarPorId(Long id) {
@@ -31,38 +22,37 @@ public class ContatoDAO {
 
     public List<Contato> listarTodos() {
         try (Session sessao = HibernateUtil.getSessionFactory().openSession()) {
-            return sessao.createQuery("FROM Contato", Contato.class).getResultList();
+            return sessao.createQuery("FROM Contato", Contato.class).list();
         }
     }
 
     public void atualizar(Contato contato) {
-        Transaction transacao = null;
-        try (Session sessao = HibernateUtil.getSessionFactory().openSession()) {
-            transacao = sessao.beginTransaction();
-            sessao.merge(contato);
-            transacao.commit();
-
-        } catch (RuntimeException e) {
-            if (transacao != null && transacao.isActive()) {
-                transacao.rollback();
-            }
-            throw e;
-        }
+        executar(sessao -> sessao.merge(contato));
     }
 
     public void excluir(Contato contato) {
-        Transaction transacao = null;
-        try (Session sessao = HibernateUtil.getSessionFactory().openSession()) {
-            transacao = sessao.beginTransaction();
-            Contato entidade = sessao.merge(contato);
-            sessao.remove(entidade);
-            transacao.commit();
+        executar(sessao -> {
+            Contato gerenciado = sessao.merge(contato);
+            sessao.remove(gerenciado);
+        });
+    }
 
-        } catch (RuntimeException e) {
+    private void executar(
+            java.util.function.Consumer<Session> acao) {
+        Transaction transacao = null;
+
+        try (Session sessao =
+                     HibernateUtil.getSessionFactory().openSession()) {
+            transacao = sessao.beginTransaction();
+            acao.accept(sessao);
+            transacao.commit();
+        } catch (Exception erro) {
             if (transacao != null && transacao.isActive()) {
                 transacao.rollback();
             }
-            throw e;
+            throw new RuntimeException(
+                    "Erro ao executar operação de contato.", erro
+            );
         }
     }
 }
