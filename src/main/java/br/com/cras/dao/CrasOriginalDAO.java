@@ -3,6 +3,7 @@ package br.com.cras.dao;
 
 import br.com.cras.model.CrasOriginal;
 import br.com.cras.util.HibernateUtil;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -11,73 +12,92 @@ import java.util.List;
 public class CrasOriginalDAO {
 
     public void salvar(CrasOriginal cras) {
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
         Transaction transacao = null;
 
-        try (Session sessao =
-                     HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transacao = sessao.beginTransaction();
             sessao.persist(cras);
             transacao.commit();
+
         } catch (Exception erro) {
-            if (transacao != null && transacao.isActive()) {
+
+            if (transacao != null) {
                 transacao.rollback();
             }
-            throw new RuntimeException(
-                    "Erro ao salvar registro original.", erro
-            );
+
+            System.out.println("Erro ao salvar registro original: " + erro.getMessage());
+
+        } finally {
+            sessao.close();
         }
     }
 
     public CrasOriginal buscarPorId(String id) {
-        try (Session sessao =
-                     HibernateUtil.getSessionFactory().openSession()) {
-            return sessao.get(CrasOriginal.class, id);
-        }
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        CrasOriginal cras = sessao.get(CrasOriginal.class, id);
+        sessao.close();
+
+        return cras;
     }
 
     public List<CrasOriginal> listarTodos() {
-        try (Session sessao =
-                     HibernateUtil.getSessionFactory().openSession()) {
-            return sessao.createQuery(
-                    "FROM CrasOriginal", CrasOriginal.class
-            ).list();
-        }
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        List<CrasOriginal> lista = sessao.createQuery(
+                "FROM CrasOriginal", CrasOriginal.class
+        ).list();
+        sessao.close();
+
+        return lista;
     }
 
     public void atualizar(CrasOriginal cras) {
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
         Transaction transacao = null;
 
-        try (Session sessao =
-                     HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transacao = sessao.beginTransaction();
             sessao.merge(cras);
             transacao.commit();
+
         } catch (Exception erro) {
-            if (transacao != null && transacao.isActive()) {
+
+            if (transacao != null) {
                 transacao.rollback();
             }
-            throw new RuntimeException(
-                    "Erro ao atualizar registro original.", erro
-            );
+
+            System.out.println("Erro ao atualizar registro original: " + erro.getMessage());
+
+        } finally {
+            sessao.close();
         }
     }
 
     public void excluir(CrasOriginal cras) {
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
         Transaction transacao = null;
 
-        try (Session sessao =
-                     HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transacao = sessao.beginTransaction();
-            CrasOriginal gerenciado = sessao.merge(cras);
-            sessao.remove(gerenciado);
+            CrasOriginal crasEncontrado = sessao.merge(cras);
+            sessao.remove(crasEncontrado);
             transacao.commit();
+
         } catch (Exception erro) {
-            if (transacao != null && transacao.isActive()) {
+
+            if (transacao != null) {
                 transacao.rollback();
             }
-            throw new RuntimeException(
-                    "Erro ao excluir registro original.", erro
-            );
+
+            System.out.println("Erro ao excluir registro original: " + erro.getMessage());
+
+        } finally {
+            sessao.close();
         }
     }
 }
