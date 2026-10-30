@@ -3,6 +3,7 @@ package br.com.cras.dao;
 
 import br.com.cras.model.Endereco;
 import br.com.cras.util.HibernateUtil;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -11,52 +12,92 @@ import java.util.List;
 public class EnderecoDAO {
 
     public void salvar(Endereco endereco) {
-        executar(sessao -> sessao.persist(endereco));
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        Transaction transacao = null;
+
+        try {
+            transacao = sessao.beginTransaction();
+            sessao.persist(endereco);
+            transacao.commit();
+
+        } catch (Exception erro) {
+
+            if (transacao != null) {
+                transacao.rollback();
+            }
+
+            System.out.println("Erro ao salvar endereço: " + erro.getMessage());
+
+        } finally {
+            sessao.close();
+        }
     }
 
     public Endereco buscarPorId(Long id) {
-        try (Session sessao =
-                     HibernateUtil.getSessionFactory().openSession()) {
-            return sessao.get(Endereco.class, id);
-        }
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        Endereco endereco = sessao.get(Endereco.class, id);
+        sessao.close();
+
+        return endereco;
     }
 
     public List<Endereco> listarTodos() {
-        try (Session sessao =
-                     HibernateUtil.getSessionFactory().openSession()) {
-            return sessao.createQuery(
-                    "FROM Endereco", Endereco.class
-            ).list();
-        }
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        List<Endereco> lista = sessao.createQuery(
+                "FROM Endereco", Endereco.class
+        ).list();
+        sessao.close();
+
+        return lista;
     }
 
     public void atualizar(Endereco endereco) {
-        executar(sessao -> sessao.merge(endereco));
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        Transaction transacao = null;
+
+        try {
+            transacao = sessao.beginTransaction();
+            sessao.merge(endereco);
+            transacao.commit();
+
+        } catch (Exception erro) {
+
+            if (transacao != null) {
+                transacao.rollback();
+            }
+
+            System.out.println("Erro ao atualizar endereço: " + erro.getMessage());
+
+        } finally {
+            sessao.close();
+        }
     }
 
     public void excluir(Endereco endereco) {
-        executar(sessao -> {
-            Endereco gerenciado = sessao.merge(endereco);
-            sessao.remove(gerenciado);
-        });
-    }
 
-    private void executar(
-            java.util.function.Consumer<Session> acao) {
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
         Transaction transacao = null;
 
-        try (Session sessao =
-                     HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transacao = sessao.beginTransaction();
-            acao.accept(sessao);
+            Endereco enderecoEncontrado = sessao.merge(endereco);
+            sessao.remove(enderecoEncontrado);
             transacao.commit();
+
         } catch (Exception erro) {
-            if (transacao != null && transacao.isActive()) {
+
+            if (transacao != null) {
                 transacao.rollback();
             }
-            throw new RuntimeException(
-                    "Erro ao executar operação de endereço.", erro
-            );
+
+            System.out.println("Erro ao excluir endereço: " + erro.getMessage());
+
+        } finally {
+            sessao.close();
         }
     }
 }

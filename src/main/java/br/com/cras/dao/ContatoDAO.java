@@ -11,48 +11,91 @@ import java.util.List;
 public class ContatoDAO {
 
     public void salvar(Contato contato) {
-        executar(sessao -> sessao.persist(contato));
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        Transaction transacao = null;
+
+        try {
+            transacao = sessao.beginTransaction();
+            sessao.persist(contato);
+            transacao.commit();
+
+        } catch (Exception erro) {
+
+            if (transacao != null) {
+                transacao.rollback();
+            }
+
+            System.out.println("Erro ao salvar contato: " + erro.getMessage());
+
+        } finally {
+            sessao.close();
+        }
     }
 
     public Contato buscarPorId(Long id) {
-        try (Session sessao = HibernateUtil.getSessionFactory().openSession()) {
-            return sessao.get(Contato.class, id);
-        }
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        Contato contato = sessao.get(Contato.class, id);
+        sessao.close();
+
+        return contato;
     }
 
     public List<Contato> listarTodos() {
-        try (Session sessao = HibernateUtil.getSessionFactory().openSession()) {
-            return sessao.createQuery("FROM Contato", Contato.class).list();
-        }
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        List<Contato> contatos = sessao.createQuery("FROM Contato", Contato.class).list();
+        sessao.close();
+
+        return contatos;
     }
 
     public void atualizar(Contato contato) {
-        executar(sessao -> sessao.merge(contato));
+
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
+        Transaction transacao = null;
+
+        try {
+            transacao = sessao.beginTransaction();
+            sessao.merge(contato);
+            transacao.commit();
+
+        } catch (Exception erro) {
+
+            if (transacao != null) {
+                transacao.rollback();
+            }
+
+            System.out.println("Erro ao atualizar contato: " + erro.getMessage());
+
+        } finally {
+            sessao.close();
+        }
     }
 
     public void excluir(Contato contato) {
-        executar(sessao -> {
-            Contato gerenciado = sessao.merge(contato);
-            sessao.remove(gerenciado);
-        });
-    }
 
-    private void executar(
-            java.util.function.Consumer<Session> acao) {
+        Session sessao = HibernateUtil.getSessionFactory().openSession();
         Transaction transacao = null;
 
-        try (Session sessao =
-                     HibernateUtil.getSessionFactory().openSession()) {
+        try {
             transacao = sessao.beginTransaction();
-            acao.accept(sessao);
+            Contato contatoEncontrado = sessao.merge(contato);
+            sessao.remove(contatoEncontrado);
+
             transacao.commit();
+
         } catch (Exception erro) {
-            if (transacao != null && transacao.isActive()) {
+
+            if (transacao != null) {
                 transacao.rollback();
             }
-            throw new RuntimeException(
-                    "Erro ao executar operação de contato.", erro
-            );
+
+            System.out.println("Erro ao excluir contato: " + erro.getMessage());
+
+        } finally {
+            sessao.close();
         }
     }
 }
