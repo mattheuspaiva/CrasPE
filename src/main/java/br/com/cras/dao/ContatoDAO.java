@@ -33,15 +33,6 @@ public class ContatoDAO {
         }
     }
 
-    public Contato buscarPorId(Long id) {
-
-        Session sessao = HibernateUtil.getSessionFactory().openSession();
-        Contato contato = sessao.get(Contato.class, id);
-        sessao.close();
-
-        return contato;
-    }
-
     public List<Contato> listarTodos() {
 
         Session sessao = HibernateUtil.getSessionFactory().openSession();
@@ -51,51 +42,5 @@ public class ContatoDAO {
         return contatos;
     }
 
-    public void atualizar(Contato contato) {
 
-        Session sessao = HibernateUtil.getSessionFactory().openSession();
-        Transaction transacao = null;
-
-        try {
-            transacao = sessao.beginTransaction();
-            sessao.merge(contato);
-            transacao.commit();
-
-        } catch (Exception erro) {
-
-            if (transacao != null) {
-                transacao.rollback();
-            }
-
-            System.out.println("Erro ao atualizar contato: " + erro.getMessage());
-
-        } finally {
-            sessao.close();
-        }
-    }
-
-    public void excluir(Contato contato) {
-
-        Session sessao = HibernateUtil.getSessionFactory().openSession();
-        Transaction transacao = null;
-
-        try {
-            transacao = sessao.beginTransaction();
-            Contato contatoEncontrado = sessao.merge(contato);
-            sessao.remove(contatoEncontrado);
-
-            transacao.commit();
-
-        } catch (Exception erro) {
-
-            if (transacao != null) {
-                transacao.rollback();
-            }
-
-            System.out.println("Erro ao excluir contato: " + erro.getMessage());
-
-        } finally {
-            sessao.close();
-        }
-    }
 }
